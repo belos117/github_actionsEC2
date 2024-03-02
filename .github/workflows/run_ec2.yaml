@@ -1,4 +1,4 @@
-name: Provision t3.micro EC2
+name: Run t3.micro EC2
 on:
   push:
     # Sequence of patterns matched against refs/heads
