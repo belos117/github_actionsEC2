@@ -31,7 +31,7 @@ jobs:
         env:
           TF_VAR_ec2_name:  "${{ github.event.inputs.ec2-name }}"
         run: |
-          cd github_actionsEC2
+          cd tf-example
           terraform init
           terraform validate
           terraform plan 
