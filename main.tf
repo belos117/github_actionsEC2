@@ -17,8 +17,8 @@ provider "aws" {
 }
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
-  key_name      = "app-ssh-key"
+  instance_type = var.instance_type
+  key_name      = var.key_name
 tags = {
     Name = var.ec2_name
   }
