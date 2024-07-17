@@ -60,7 +60,11 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Run Ansible Playbook
-        uses: stephengroat/ansible-playbook-action@v2.1.2
+        uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: playbook.yml
-          inventory: localhost,
+          directory: ./
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          inventory: |
+            [all]
+            ${{secrets.HETZNER_IP}}
