@@ -43,7 +43,7 @@ jobs:
       - name: Parse Terraform output
         id: parse_output
         run: |
-          IP=$(terraform output -json | jq -r '.server_ip.value')
-          echo "Server IP: $IP"
+          IP=$(terraform output -json | jq -r '.instance_public_ip.value')
+          echo "instance_public_ip: $IP"
           run: echo "{name}={value}" > $HETZNER_IP
         working-directory: ./
