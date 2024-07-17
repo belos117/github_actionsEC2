@@ -26,3 +26,4 @@ tags = {
 
 output "server_ip" {
   value = app_server.var.ec2_name.ipv4_address
+}
