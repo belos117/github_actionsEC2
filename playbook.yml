@@ -1,0 +1,81 @@
+- hosts: hetzner
+  become: yes
+  vars:
+    users:
+    - name: festus
+      groups: sudo
+      shell: /bin/bash
+      pubkey: "AAAAB3NzaC1yc2EAAAADAQABAAABgQDIcctmrmFIR2zlAgkoGvIa3Lu3VhsGU+HSXZbfqjygzJSgFsKunColPS7hnWpG4oMpW26GT+RI2KqyY3u622MCizwsyZNAWOlZHju47nzzfyveg1I4YVepbdoaeXc3GYz4RPKnn19PiXRdtWGr2LSatT3pTgsZxitM4DvTrLYwJbHtyPoQzRUbozahXFbAllhVE3MOHWQZapbNb5x+DC6NVPbjICl2CBDQSDBs6cFLzzrKO5MtWwpcYxe85UnhIz663zeBGixVyddLuKe2ukRgrKd2xX6reMHhz87h06Q1b87lnayrejh8BNSv4FH3nYGvz3Nx3J7K1IlXIQhwyrhC72htpbY4CE1ulEY1Yb4AWshiEi+P7XD4URk13ff6d9Gpy3Tp9DCaQIms5HmfvS9WZTtc/unxn49glcbnzB+ADEOwFPQfGgwCymzZ6gR2qolkMFI7wVMjNFjTrrisLNpzmKarU02aC9oycKR1KsUsBTg7HY8sNL+bRyXId1sa6rs="
+
+  tasks:
+  - name: Update and upgrade apt packages
+    apt:
+      update_cache: yes
+      upgrade: dist
+      autoremove: yes
+
+  - name: Install required packages
+    apt:
+      name:
+      - docker.io
+      - docker-compose
+      - python3-pip
+      - ufw
+      state: present
+      update_cache: yes
+
+  - name: Add user "{{ item.name }}"
+    user:
+      name: "{{ item.name }}"
+      groups: "{{ item.groups }}"
+      shell: "{{ item.shell }}"
+      state: present
+    loop: "{{ users }}"
+
+  - name: Add SSH key for user "{{ item.name }}"
+    authorized_key:
+      user: "{{ item.name }}"
+      key: "{{ item.pubkey }}"
+    loop: "{{ users }}"
+
+  - name: Configure firewall
+    ufw:
+      rule: allow
+      port: "{{ item }}"
+      proto: tcp
+    with_items:
+    - '22'
+    - '80'
+    - '443'
+
+  - name: Enable UFW
+    ufw:
+      state: enabled
+
+  - name: Start and enable Docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Add user to Docker group
+    user:
+      name: "{{ item.name }}"
+      groups: docker
+      append: yes
+    loop: "{{ users }}"
+
+  - name: Copy Docker Compose file
+    copy:
+      src: ./deployment/docker-compose.yml
+      dest: /opt/docker/docker-compose.yml
+
+  - name: Create Docker Compose directory
+    file:
+      path: /opt/docker
+      state: directory
+
+  - name: Run Docker Compose
+    shell: docker-compose up -d
+    args:
+      chdir: /opt/docker
