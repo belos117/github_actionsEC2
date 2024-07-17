@@ -1,4 +1,4 @@
-- hosts: hetzner
+- hosts: ${{secrets.HETZNER_IP}}
   become: yes
   vars:
     users:
