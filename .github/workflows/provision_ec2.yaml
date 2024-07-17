@@ -42,5 +42,5 @@ jobs:
         run: |
           IP=$(terraform output -json | jq -r '.server_ip.value')
           echo "Server IP: $IP"
-          echo "::set-output name=HETZNER_IP::$IP"
+          run: echo "{name}={value}" >> $HETZNER_IP
         working-directory: ./
