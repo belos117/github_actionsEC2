@@ -1,4 +1,6 @@
-- hosts: "${{secrets.HETZNER_IP}}"
+env:
+  HETZNER_IP: "${{secrets.HETZNER_IP}}"
+- hosts: HETZNER_IP
   become: yes
   vars:
     users:
