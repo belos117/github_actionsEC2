@@ -53,3 +53,14 @@ jobs:
           echo $HETZNER_IP > /tmp/hetzner_ip.txt
         env:
           HETZNER_IP: ${{ steps.parse_output.outputs.HETZNER_IP }}
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Run Ansible Playbook
+        uses: stephengroat/ansible-playbook-action@v2.1.2
+        with:
+          playbook: playbook.yml
+          inventory: localhost,
