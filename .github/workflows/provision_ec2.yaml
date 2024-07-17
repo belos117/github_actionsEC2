@@ -1,4 +1,7 @@
 name: Provision t3.micro EC2
+
+env:
+      HETZNER_IP: ${{ secrets.HETZNER_IP }}
 on:
   workflow_dispatch:
     inputs:
@@ -42,5 +45,5 @@ jobs:
         run: |
           IP=$(terraform output -json | jq -r '.server_ip.value')
           echo "Server IP: $IP"
-          run: echo "{name}={value}" > $HETZNER_IP
+          run: echo "{name}={value}" > ${{HETZNER_IP}}
         working-directory: ./
