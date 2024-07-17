@@ -45,5 +45,5 @@ jobs:
         run: |
           IP=$(terraform output -json | jq -r '.instance_public_ip.value')
           echo "instance_public_ip: $IP"
-          run: echo "{name}={value}" > $HETZNER_IP
+          echo "::set-output name=HETZNER_IP::$IP"
         working-directory: ./
