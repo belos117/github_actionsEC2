@@ -34,4 +34,13 @@ jobs:
           terraform init
           terraform validate
           terraform plan 
-          terraform apply -auto-approve
+          terraform apply -auto-approve -json > tf_output.json
+        working-directory: ./
+          
+      - name: Parse Terraform output
+        id: parse_output
+        run: |
+          IP=$(terraform output -json | jq -r '.server_ip.value')
+          echo "Server IP: $IP"
+          echo "::set-output name=HETZNER_IP::$IP"
+        working-directory: ./
